@@ -2,7 +2,12 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Param,
   Post,
+  Query,
   Request,
   Res,
   Response,
@@ -12,24 +17,25 @@ import {
   Response as ResponseExpress,
 } from 'express';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { WebResponse } from 'src/model/web.model';
+import { UserResponse } from 'src/model/user.model';
+import { LoginRequest, RegisterRequest } from '../model/auth.model';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
+  ) {}
 
   @Post('/login')
-  async create(@Body() loginDto: LoginDto, @Response() res: ResponseExpress) {
-    const user = await this.authService.validateUser(
-      loginDto.email,
-      loginDto.password,
-    );
-
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const token = await this.authService.login(user);
+  async login(
+    @Body() loginRequest: LoginRequest,
+    @Response() res: ResponseExpress,
+  ) {
+    const token = await this.authService.login(loginRequest);
 
     res.cookie('jwt', token.refresh_token, {
       httpOnly: true, //accessible only by web server
@@ -38,7 +44,7 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
     });
 
-    return res.json({
+    return res.status(200).json({
       message: 'Authenticated',
       access_token: token.access_token,
     });
@@ -67,5 +73,20 @@ export class AuthController {
     }
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'none', secure: true });
     return res.json({ message: 'Cookie cleared' });
+  }
+
+  @Post('/register')
+  async register(
+    @Body() request: RegisterRequest,
+  ): Promise<WebResponse<UserResponse>> {
+    const result = await this.authService.register(request);
+    return {
+      data: result,
+    };
+  }
+
+  @Get('/verification')
+  async verification(@Query('token') token: string) {
+    return this.authService.verificationEmail(token);
   }
 }

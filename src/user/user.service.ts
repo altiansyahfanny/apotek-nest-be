@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { DatabaseService } from 'src/database/database.service';
+import { PrismaService } from 'src/common/prisma.service';
 
 @Injectable()
 export class UserService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private prismaService: PrismaService) {}
 
   create(createUserDto: Prisma.UserCreateInput) {
-    return this.databaseService.user.create({
+    return this.prismaService.user.create({
       data: createUserDto,
     });
   }
@@ -17,10 +17,10 @@ export class UserService {
     pagination: { page: number; pageSize: number },
     sort: { direction: string; column: string },
   ) {
-    const total = await this.databaseService.user.count({
+    const total = await this.prismaService.user.count({
       where: query,
     });
-    const data = await this.databaseService.user.findMany({
+    const data = await this.prismaService.user.findMany({
       where: query,
       take: pagination.pageSize,
       skip: (pagination.page - 1) * pagination.pageSize,
@@ -39,18 +39,18 @@ export class UserService {
   }
 
   findOne(id: number) {
-    return this.databaseService.user.findFirst({ where: { id } });
+    return this.prismaService.user.findFirst({ where: { id } });
   }
 
   update(id: number, updateUserDto: Prisma.UserCreateInput) {
     // return `This action updates a #${id} user : ${updateUserDto}`;
-    return this.databaseService.user.update({
+    return this.prismaService.user.update({
       data: updateUserDto,
       where: { id },
     });
   }
 
   remove(id: number) {
-    return this.databaseService.user.delete({ where: { id } });
+    return this.prismaService.user.delete({ where: { id } });
   }
 }

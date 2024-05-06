@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { DatabaseService } from 'src/database/database.service';
+import { PrismaService } from 'src/common/prisma.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private prismaService: PrismaService) {}
 
   async findAll() {
-    const data = await this.databaseService.product.findMany();
+    const data = await this.prismaService.product.findMany();
 
     return {
       data,
@@ -16,7 +16,7 @@ export class ProductService {
 
   // MUTATION
   create(createProductDto: Prisma.ProductCreateInput) {
-    return this.databaseService.product.create({
+    return this.prismaService.product.create({
       data: createProductDto,
     });
   }

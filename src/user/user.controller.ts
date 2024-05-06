@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { UserService } from './user.service';
-import { RoleGuard } from 'src/role/role.guard';
+import { RoleGuard } from 'src/guard/role.guard';
 
 export type UserQueryType = {
   name?: string;
