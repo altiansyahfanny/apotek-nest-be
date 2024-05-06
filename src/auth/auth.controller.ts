@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
   Inject,
-  Param,
   Post,
   Query,
   Request,
@@ -16,12 +15,12 @@ import {
   Request as RequestExpress,
   Response as ResponseExpress,
 } from 'express';
-import { AuthService } from './auth.service';
-import { WebResponse } from 'src/model/web.model';
-import { UserResponse } from 'src/model/user.model';
-import { LoginRequest, RegisterRequest } from '../model/auth.model';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { UserResponse } from 'src/model/user.model';
+import { WebResponse } from 'src/model/web.model';
 import { Logger } from 'winston';
+import { LoginRequest, RegisterRequest } from '../model/auth.model';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
@@ -57,12 +56,15 @@ export class AuthController {
   ) {
     const cookies = req.cookies;
 
-    if (!cookies?.jwt) return res.status(401).json({ message: 'Unauthorized' });
+    if (!cookies?.jwt) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
 
     const refreshToken = cookies.jwt;
-
     const newToken = await this.authService.refresh(refreshToken);
+
     return res.status(200).json({ message: 'Success', access_token: newToken });
+    // return { message: 'Success', access_token: newToken };
   }
 
   @Post('/logout')

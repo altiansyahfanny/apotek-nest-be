@@ -25,12 +25,12 @@ import { ValidationService } from './validation.service';
     MailerModule.forRoot(mailerConfig),
   ],
   providers: [
-    ValidationService,
-    PrismaService,
     {
       provide: APP_FILTER,
       useClass: ErrorFilter,
     },
+    ValidationService,
+    PrismaService,
     MailService,
     TokenService,
     JwtService,

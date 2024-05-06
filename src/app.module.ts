@@ -7,7 +7,6 @@ import { LogMiddleware } from './middleware/log.middleware';
 import { ProductModule } from './product/product.module';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,11 +20,9 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
     CommonModule,
   ],
-  providers: [],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    // consumer.apply(AuthMiddleware).forRoutes(UserController);
     consumer.apply(AuthMiddleware).forRoutes(UserController);
     consumer.apply(cookieParser(), LogMiddleware).forRoutes('*');
   }
