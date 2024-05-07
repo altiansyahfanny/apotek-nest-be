@@ -13,15 +13,16 @@ export class ErrorFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       response.status(exception.getStatus()).json({
-        errors: exception.getResponse(),
+        errors:
+          typeof exception.getResponse() === 'string'
+            ? exception.getResponse()
+            : 'Something went wrong',
+        data: exception.getResponse(),
       });
     } else if (exception instanceof ZodError) {
       response.status(400).json({
         errors: 'Validation error',
-        data: exception.issues.map(({ message, path }) => ({
-          message,
-          path,
-        })),
+        data: exception.issues,
       });
     } else {
       response.status(500).json({

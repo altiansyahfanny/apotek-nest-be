@@ -14,6 +14,11 @@ export class ForgotPasswordRequest {
   email: string;
 }
 
+export class ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
 export class AuthResponse {
   name: string;
   email: string;

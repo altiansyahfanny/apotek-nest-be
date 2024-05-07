@@ -69,6 +69,29 @@ export class TokenService {
     }
   }
 
+  async forgotPassword(email: string) {
+    return this.jwtService.sign(
+      { email },
+      {
+        secret: process.env.VERIFICATION_RESET_PASSWORD_SECRET,
+        privateKey: process.env.VERIFICATION_RESET_PASSWORD_SECRET,
+        expiresIn: '5m',
+      },
+    );
+  }
+
+  async verifyResetPassword(token: string) {
+    try {
+      const { email }: { email: string } = await this.jwtService.verify(token, {
+        secret: process.env.VERIFICATION_RESET_PASSWORD_SECRET,
+      });
+
+      return email;
+    } catch (error) {
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
   async verification(email: string) {
     return this.jwtService.sign(
       { email },

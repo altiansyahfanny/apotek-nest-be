@@ -19,7 +19,12 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { UserResponse } from 'src/model/user.model';
 import { WebResponse } from 'src/model/web.model';
 import { Logger } from 'winston';
-import { LoginRequest, RegisterRequest } from '../model/auth.model';
+import {
+  ForgotPasswordRequest,
+  LoginRequest,
+  RegisterRequest,
+  ResetPasswordRequest,
+} from '../model/auth.model';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -90,5 +95,15 @@ export class AuthController {
   @Get('/verification')
   async verification(@Query('token') token: string) {
     return this.authService.verificationEmail(token);
+  }
+
+  @Post('/forgot-password')
+  async forgotPassword(@Body() request: ForgotPasswordRequest) {
+    return this.authService.forgotPassword(request);
+  }
+
+  @Post('/reset-password')
+  async verifyForgotPassword(@Body() request: ResetPasswordRequest) {
+    return this.authService.resetPassword(request);
   }
 }

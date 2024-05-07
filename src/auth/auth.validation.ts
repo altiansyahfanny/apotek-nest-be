@@ -7,10 +7,14 @@ export class AuthValidation {
     password: z.string().min(1).max(100),
   });
   static readonly LOGIN: ZodType = z.object({
-    email: z.string().min(1).max(100).email(),
+    email: z.string().min(3).max(100).email(),
     password: z.string().min(1).max(100),
   });
   static readonly FORGOT_PASSWORD: ZodType = z.object({
     email: z.string().min(1).max(100).email(),
+  });
+  static readonly RESET_PASSWORD: ZodType = z.object({
+    token: z.string().min(1),
+    password: z.string().min(1).max(100),
   });
 }

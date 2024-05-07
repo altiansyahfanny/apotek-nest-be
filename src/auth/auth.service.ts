@@ -8,8 +8,10 @@ import { ValidationService } from 'src/common/validation.service';
 import { Logger } from 'winston';
 import {
   AuthResponse,
+  ForgotPasswordRequest,
   LoginRequest,
   RegisterRequest,
+  ResetPasswordRequest,
 } from '../model/auth.model';
 import { AuthValidation } from './auth.validation';
 
@@ -123,5 +125,56 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async forgotPassword(request: ForgotPasswordRequest) {
+    const forgotPassword: ForgotPasswordRequest =
+      this.validationService.validate(AuthValidation.FORGOT_PASSWORD, request);
+
+    const user = await this.prismaService.user.findFirst({
+      where: { email: forgotPassword.email, isActive: true },
+    });
+
+    if (!user) {
+      throw new HttpException('Email not registered', HttpStatus.BAD_REQUEST);
+    }
+
+    await this.mailService.forgotPassword(user.email);
+
+    return {
+      email: user.email,
+      name: user.name,
+    };
+  }
+
+  async resetPassword(request: ResetPasswordRequest) {
+    const resetPassword: ResetPasswordRequest = this.validationService.validate(
+      AuthValidation.RESET_PASSWORD,
+      request,
+    );
+
+    const email = await this.tokenService.verifyResetPassword(
+      resetPassword.token,
+    );
+
+    const user = await this.prismaService.user.findFirst({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const hashPassword = await bcrypt.hash(resetPassword.password, 10);
+
+    const updatedUser = await this.prismaService.user.update({
+      data: { password: hashPassword },
+      where: { email },
+    });
+
+    return {
+      email: updatedUser.email,
+      name: updatedUser.name,
+    };
   }
 }
