@@ -3,11 +3,15 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  Injectable,
 } from '@nestjs/common';
 import { ZodError } from 'zod';
+import { ValidationService } from './validation.service';
 
+@Injectable()
 @Catch(ZodError, HttpException)
 export class ErrorFilter implements ExceptionFilter {
+  constructor(private readonly validationService: ValidationService) {}
   catch(exception: any, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse();
 

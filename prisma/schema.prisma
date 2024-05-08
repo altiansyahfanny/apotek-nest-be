@@ -11,12 +11,13 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @db.VarChar(100) @unique()
-  name     String   @db.VarChar(100)
-  password String   @db.VarChar(255)
-  role     String   @default("USER") @db.VarChar(20)
-  isActive Boolean  @default(false)
+  id          Int      @id @default(autoincrement())
+  email       String   @db.VarChar(100) @unique()
+  name        String   @db.VarChar(100)
+  password    String   @db.VarChar(255)
+  profilePic  String?  @db.VarChar(255)
+  role        String   @default("USER") @db.VarChar(20)
+  isActive    Boolean  @default(false)
 }
 
 model Product {
