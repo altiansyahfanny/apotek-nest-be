@@ -11,17 +11,18 @@ export class AuthMiddleware implements NestMiddleware<Request, Response> {
 
     if (token) {
       try {
-        await this.jwtService.verify(token, {
+        const result = await this.jwtService.verify(token, {
           secret: process.env.ACCESS_TOKEN_SECRET,
         });
+        req.headers['user'] = result.user;
         next();
       } catch (error) {
-        res.status(401).json({ message: 'Invalid token' });
-        // throw new HttpException('Invalid token.', HttpStatus.UNAUTHORIZED);
+        // Invalid token
+        res.status(401).json({ message: 'Unauthorized' });
       }
     } else {
-      res.status(401).json({ message: 'Token not found.' });
-      // throw new HttpException('Token not found.', HttpStatus.UNAUTHORIZED);
+      // Token not found
+      res.status(401).json({ message: 'Unauthorized' });
     }
   }
 }

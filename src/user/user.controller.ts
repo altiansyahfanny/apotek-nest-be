@@ -4,16 +4,18 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma.service';
-import { FileService } from 'src/file/file.service';
 import { RoleGuard } from 'src/guard/role.guard';
 import { UserService } from './user.service';
 
@@ -27,7 +29,6 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly prismaService: PrismaService,
-    private readonly fileService: FileService,
   ) {}
 
   @Post()
@@ -79,5 +80,16 @@ export class UserController {
   @UseGuards(new RoleGuard(['Admin']))
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @Get('/get/profile')
+  async profile(@Req() req: Request) {
+    const email = req.headers['user'];
+
+    if (email) {
+      return await this.prismaService.user.findUnique({ where: { email } });
+    } else {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
   }
 }

@@ -46,6 +46,6 @@ export class PrismaService
       // this.logger.warn(e);
     });
 
-    await this.$connect();
+    // await this.$connect();
   }
 }

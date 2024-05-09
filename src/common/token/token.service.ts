@@ -10,7 +10,7 @@ export class TokenService {
     try {
       const access_token = this.jwtService.sign(
         {
-          user,
+          user: user.email,
         },
         {
           secret: process.env.ACCESS_TOKEN_SECRET,
@@ -21,12 +21,12 @@ export class TokenService {
 
       const refresh_token = this.jwtService.sign(
         {
-          email: user.email,
+          user: user.email,
         },
         {
           secret: process.env.REFRESH_TOKEN_SECRET,
           privateKey: process.env.REFRESH_TOKEN_SECRET,
-          expiresIn: '1h',
+          expiresIn: '24h',
         },
       );
 

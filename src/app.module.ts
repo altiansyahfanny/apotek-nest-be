@@ -8,9 +8,11 @@ import { LogMiddleware } from './middleware/log.middleware';
 import { ProductModule } from './product/product.module';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [UserModule, ProductModule, AuthModule, CommonModule, FileModule],
+  controllers: [AppController],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
