@@ -18,6 +18,8 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma.service';
 import { RoleGuard } from 'src/guard/role.guard';
 import { UserService } from './user.service';
+import { SearchUserRequest, UserResponse } from 'src/model/user.model';
+import { WebResponse } from 'src/model/web.model';
 
 export type UserQueryType = {
   name?: string;
@@ -34,33 +36,6 @@ export class UserController {
   @Post()
   create(@Body() createUserDto: Prisma.UserCreateInput) {
     return this.userService.create(createUserDto);
-  }
-
-  @Get()
-  async findAll(
-    @Query('name') name?: string,
-    @Query('email') email?: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize = 10,
-    @Query('sortDirection', new DefaultValuePipe('desc'))
-    sortDirection: string = 'asc',
-    @Query('sortColumn', new DefaultValuePipe('id'))
-    sortColumn: string = 'id',
-  ) {
-    const prismaQuery: Prisma.UserWhereInput = {
-      name: { contains: name },
-      email: { contains: email },
-    };
-
-    const pagination = {
-      page,
-      pageSize,
-    };
-
-    return this.userService.findAll(prismaQuery, pagination, {
-      direction: sortDirection,
-      column: sortColumn,
-    });
   }
 
   @Get(':id')
@@ -91,5 +66,30 @@ export class UserController {
     } else {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
+  }
+
+  @Get()
+  findAll(
+    @Query('name') name: string,
+    @Query('email') email: string,
+    @Query('role') role: string,
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('size', new ParseIntPipe({ optional: true })) size?: number,
+    @Query('sortDirection', new DefaultValuePipe('desc'))
+    sortDirection?: string,
+    @Query('sortColumn', new DefaultValuePipe('id'))
+    sortColumn?: string,
+  ): Promise<WebResponse<UserResponse[]>> {
+    const request: SearchUserRequest = {
+      name,
+      email,
+      role,
+      page: page || 1,
+      size: size || 10,
+      sortColumn,
+      sortDirection,
+    };
+
+    return this.userService.findAll(request);
   }
 }

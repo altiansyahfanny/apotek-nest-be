@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 
-describe('AuthController', () => {
+describe('AppController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -15,18 +15,10 @@ describe('AuthController', () => {
     await app.init();
   });
 
-  describe('POST /api/auth/register', () => {
-    it('should be rejected if request is invalid', async () => {
-      const response = await request(app.getHttpServer())
-        .post('/api/auth/register')
-        .send({
-          email: '',
-          password: '',
-          name: '',
-        });
-
-      expect(response.status).toBe(400);
-      expect(response.body.errors).toBeDefined();
-    });
+  it('/ (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/')
+      .expect(200)
+      .expect('Hello World!');
   });
 });

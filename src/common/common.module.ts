@@ -6,10 +6,10 @@ import { JwtService } from '@nestjs/jwt';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import { ErrorFilter } from './error.filter';
-import { mailerConfig } from './mail/mail.config';
-import { MailService } from './mail/mail.service';
+import { mailerConfig } from '../config/mail.config';
+import { MailService } from './mail.service';
 import { PrismaService } from './prisma.service';
-import { TokenService } from './token/token.service';
+import { TokenService } from './token.service';
 import { ValidationService } from './validation.service';
 
 @Module({

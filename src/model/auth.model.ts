@@ -24,3 +24,9 @@ export class AuthResponse {
   email: string;
   token?: string;
 }
+
+export class RegisterResponse {
+  name: string;
+  email: string;
+  token?: string;
+}

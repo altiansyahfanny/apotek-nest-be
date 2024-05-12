@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { MailService } from 'src/common/mail/mail.service';
+import { MailService } from 'src/common/mail.service';
 import { PrismaService } from 'src/common/prisma.service';
-import { TokenService } from 'src/common/token/token.service';
+import { TokenService } from 'src/common/token.service';
 import { ValidationService } from 'src/common/validation.service';
 import { Logger } from 'winston';
 import {

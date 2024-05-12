@@ -16,13 +16,13 @@ import {
   Response as ResponseExpress,
 } from 'express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { UserResponse } from 'src/model/user.model';
 import { WebResponse } from 'src/model/web.model';
 import { Logger } from 'winston';
 import {
   ForgotPasswordRequest,
   LoginRequest,
   RegisterRequest,
+  RegisterResponse,
   ResetPasswordRequest,
 } from '../model/auth.model';
 import { AuthService } from './auth.service';
@@ -85,7 +85,7 @@ export class AuthController {
   @Post('/register')
   async register(
     @Body() request: RegisterRequest,
-  ): Promise<WebResponse<UserResponse>> {
+  ): Promise<WebResponse<RegisterResponse>> {
     const result = await this.authService.register(request);
     return {
       data: result,
